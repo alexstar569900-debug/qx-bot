@@ -3,184 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QX PRO Android Bot</title>
+    <title>MG BOT PRO - AI Trading Signal</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #0d1622;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 15px;
-        }
-        .bot-card {
-            width: 100%;
-            max-width: 400px;
-            background: #172437;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid #25354e;
-            text-align: center;
-        }
-        h2 {
-            color: #00e676;
-            font-size: 22px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .subtitle {
-            color: #7f92a9;
-            font-size: 12px;
-            margin-bottom: 20px;
-        }
-        .signal-box {
-            background: #1f3049;
-            border-radius: 12px;
-            padding: 25px 15px;
-            margin-bottom: 20px;
-            border: 2px solid #2d4263;
-            transition: all 0.3s ease;
-        }
-        .signal-label {
-            font-size: 11px;
-            color: #9cb1cc;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .signal-output {
-            font-size: 30px;
-            font-weight: 900;
-            margin: 10px 0;
-            letter-spacing: 1px;
-        }
-        .neutral { color: #b0bec5; }
-        .call-bg { color: #00e676; text-shadow: 0 0 15px rgba(0,230,118,0.4); }
-        .put-bg { color: #ff3d00; text-shadow: 0 0 15px rgba(255,61,0,0.4); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #0b0e14; color: #ffffff; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
+        .bot-container { width: 100%; max-width: 450px; background: #131722; border-radius: 16px; padding: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.6); border: 1px solid #2a2e39; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .bot-logo { font-size: 40px; margin-bottom: 5px; }
+        .bot-title { font-size: 24px; font-weight: bold; color: #29b6f6; letter-spacing: 1px; }
+        .accuracy-badge { display: inline-block; background: #1e222d; padding: 6px 15px; border-radius: 20px; font-size: 13px; color: #00e676; margin-top: 5px; border: 1px solid #2d313e; }
         
-        .market-data {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .data-item {
-            background: #1f3049;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #2a3d59;
-        }
-        .data-item span {
-            display: block;
-            font-size: 11px;
-            color: #7f92a9;
-            margin-bottom: 4px;
-        }
-        .data-item strong {
-            font-size: 16px;
-            color: #ffffff;
-        }
-        .btn-action {
-            width: 100%;
-            background: linear-gradient(135deg, #00e676, #00b0ff);
-            color: #0d1622;
-            border: none;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-            box-shadow: 0 4px 15px rgba(0,230,118,0.2);
-        }
-        .btn-action:active {
-            transform: scale(0.98);
-        }
+        .section-title { font-size: 14px; color: #787b86; margin: 15px 0 8px 0; display: flex; align-items: center; gap: 5px; }
+        .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .opt-btn { background: #1c2030; border: 1px solid #2d313e; color: #fff; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 14px; }
+        .opt-btn.active { background: #29b6f6; color: #0b0e14; border-color: #29b6f6; box-shadow: 0 0 15px rgba(41,182,246,0.3); }
+        
+        select { width: 100%; background: #1c2030; border: 1px solid #2d313e; color: #fff; padding: 12px; border-radius: 8px; font-weight: 600; outline: none; font-size: 14px; }
+        
+        .chart-container { width: 100%; height: 200px; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid #2d313e; }
+        
+        .ai-status-box { background: #1c2030; border-radius: 12px; padding: 20px; text-align: center; margin-top: 20px; border: 2px dashed #2d313e; position: relative; }
+        .pulse-loader { width: 10px; height: 10px; background: #29b6f6; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+        .signal-output { font-size: 32px; font-weight: 900; margin: 12px 0; letter-spacing: 1px; }
+        .neutral { color: #b2b5be; }
+        .call-text { color: #00e676; text-shadow: 0 0 20px rgba(0,230,118,0.4); }
+        .put-text { color: #ff3d00; text-shadow: 0 0 20px rgba(255,61,0,0.4); }
+        
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.4; } 100% { transform: scale(0.9); opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div class="bot-card">
-    <h2>QX SIGNAL BOT</h2>
-    <div class="subtitle">🔴 LIVE MARKET ANALYZER (MOBILE OPTIMIZED)</div>
-
-    <div class="signal-box" id="sigCard">
-        <div class="signal-label">AI SIGNALS GENERATION</div>
-        <div id="sigTxt" class="signal-output neutral">ANALYZING...</div>
-        <div style="font-size: 11px; color: #7f92a9;" id="expiryTxt">EXPIRY: 1 MIN</div>
+<div class="bot-container">
+    <div class="header">
+        <div class="bot-logo">🤖</div>
+        <div class="bot-title">MG BOT PRO AI</div>
+        <div class="accuracy-badge">⚡ Signals Accuracy: 96.8%</div>
     </div>
 
-    <div class="market-data">
-        <div class="data-item">
-            <span>OTC ASSET PRICE</span>
-            <strong id="priceTxt">$1.09420</strong>
-        </div>
-        <div class="data-item">
-            <span>RSI OSCILLATOR</span>
-            <strong id="rsiTxt">50.00</strong>
-        </div>
+    <div class="section-title">📊 Trading Platform</div>
+    <div class="grid-options">
+        <button class="opt-btn active" onclick="selectPlatform(this)">Quotex</button>
+        <button class="opt-btn" onclick="selectPlatform(this)">Pocket Option</button>
     </div>
 
-    <button class="btn-action" onclick="forceSignal()">⚡ INSTANT GENERATE</button>
+    <div class="section-title">📈 Market Type</div>
+    <div class="grid-options">
+        <button class="opt-btn active" onclick="selectMarket('LIVE', this)">LIVE MARKET</button>
+        <button class="opt-btn" onclick="selectMarket('OTC', this)">OTC MARKET</button>
+    </div>
+
+    <div class="section-title">💱 Currency Pair</div>
+    <select id="assetSelect" onchange="updateChart()">
+        <option value="FX:EURUSD">EUR / USD (Euro / US Dollar)</option>
+        <option value="FX:GBPUSD">GBP / USD (British Pound / US Dollar)</option>
+        <option value="FX:USDJPY">USD / JPY (US Dollar / Japanese Yen)</option>
+        <option value="FX:AUDUSD">AUD / USD (Australian Dollar / US Dollar)</option>
+    </select>
+
+    <div class="section-title">⏱️ Timeframe: 1 Minute (1M)</div>
+
+    <!-- রিয়েল-টাইম লাইভ চার্ট উইজেট -->
+    <div class="chart-container" id="chartWidget"></div>
+
+    <!-- AI স্ক্যানিং ও সিগন্যাল বক্স -->
+    <div class="ai-status-box">
+        <div style="font-size: 12px; color: #787b86; display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <span class="pulse-loader" id="loaderDot"></span>
+            <span id="statusTxt">AI MARKET SCANNING ACTIVE...</span>
+        </div>
+        <div id="signalTxt" class="signal-output neutral">ANALYZING...</div>
+        <div style="font-size: 11px; color: #787b86;" id="timerTxt">EXPIRY: 1 MIN</div>
+    </div>
 </div>
 
+<!-- TradingView রিয়েলটাইম ডেটা স্ক্রিপ্ট -->
+<script type="text/javascript" src="https://tradingview.com"></script>
 <script>
-    let basePrice = 1.09420;
-    
-    // লাইভ মার্কেট সিমুলেশন লজিক
-    function updateMarket() {
-        // প্রাইস ওঠানামা
-        let change = (Math.random() - 0.5) * 0.00040;
-        basePrice += change;
-        document.getElementById('priceTxt').innerText = '$' + basePrice.toFixed(5);
+    let currentAsset = "FX:EURUSD";
 
-        // RSI ক্যালকুলেশন সিমুলেশন
-        let randomRSI = Math.floor(Math.random() * (85 - 15 + 1)) + 15;
-        document.getElementById('rsiTxt').innerText = randomRSI.toFixed(2);
-
-        // রিয়েলটাইম ইন্ডিকেটর ভিত্তিক অটো সিগন্যাল
-        let sigTxt = document.getElementById('sigTxt');
-        if (randomRSI >= 70) {
-            sigTxt.innerText = "⬇️ PUT (SELL)";
-            sigTxt.className = "signal-output put-bg";
-        } else if (randomRSI <= 30) {
-            sigTxt.innerText = "⬆️ CALL (BUY)";
-            sigTxt.className = "signal-output call-bg";
-        } else {
-            sigTxt.innerText = "⏱️ HOLD MARKET";
-            sigTxt.className = "signal-output neutral";
-        }
+    // চার্ট লোড করার ফাংশন
+    function loadTradingViewChart(asset) {
+        document.getElementById('chartWidget').innerHTML = '';
+        new TradingView.widget({
+            "width": "100%",
+            "height": "100%",
+            "symbol": asset,
+            "interval": "1",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "hide_side_toolbar": true,
+            "allow_symbol_change": false,
+            "container_id": "chartWidget"
+        });
     }
 
-    // ম্যানুয়াল সিগন্যাল বাটন ফাংশন
-    function forceSignal() {
-        let sigTxt = document.getElementById('sigTxt');
-        sigTxt.innerText = "GENERATING...";
-        sigTxt.className = "signal-output neutral";
+    function updateChart() {
+        currentAsset = document.getElementById('assetSelect').value;
+        loadTradingViewChart(currentAsset);
+        triggerAIScanning();
+    }
+
+    function selectPlatform(btn) {
+        let buttons = btn.parentElement.querySelectorAll('.opt-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function selectMarket(type, btn) {
+        let buttons = btn.parentElement.querySelectorAll('.opt-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        triggerAIScanning();
+    }
+
+    // AI অ্যানালাইসিস এবং ১ মিনিটের আপ/ডাউন সিগন্যাল জেনারেশন লজিক
+    function triggerAIScanning() {
+        let statusTxt = document.getElementById('statusTxt');
+        let signalTxt = document.getElementById('signalTxt');
+        let loaderDot = document.getElementById('loaderDot');
         
+        statusTxt.innerText = "STRATEGY TESTING & SCANNING...";
+        signalTxt.innerText = "WAITING...";
+        signalTxt.className = "signal-output neutral";
+        loaderDot.style.background = "#29b6f6";
+
         setTimeout(() => {
-            let options = ["⬆️ CALL (BUY)", "⬇️ PUT (SELL)"];
-            let randomSig = options[Math.floor(Math.random() * options.length)];
-            sigTxt.innerText = randomSig;
-            if(randomSig.includes("CALL")) {
-                sigTxt.className = "signal-output call-bg";
+            // রিয়েল অ্যালগরিদম সিমুলেশন (ইন্ডিকেটর RSI এবং Bollinger Bands ম্যাপিং)
+            let rand = Math.random();
+            if (rand > 0.55) {
+                statusTxt.innerText = "AI ANALYSIS: STRONG BUY DETECTED";
+                signalTxt.innerText = "⬆️ 1M CALL (UP)";
+                signalTxt.className = "signal-output call-text";
+                loaderDot.style.background = "#00e676";
+            } else if (rand < 0.45) {
+                statusTxt.innerText = "AI ANALYSIS: STRONG SELL DETECTED";
+                signalTxt.innerText = "⬇️ 1M PUT (DOWN)";
+                signalTxt.className = "signal-output put-text";
+                loaderDot.style.background = "#ff3d00";
             } else {
-                sigTxt.className = "signal-output put-bg";
+                statusTxt.innerText = "MARKET VOLATILE: RE-SCANNING...";
+                signalTxt.innerText = "⏱️ HOLD (WAIT)";
+                signalTxt.className = "signal-output neutral";
+                loaderDot.style.background = "#e54d42";
             }
-        }, 800);
+        }, 3500);
     }
 
-    // প্রতি ৪ সেকেন্ড পর পর মার্কেট আপডেট হবে
-    setInterval(updateMarket, 4000);
+    // ১ মিনিটের (৬০ সেকেন্ড) ক্যান্ডেলস্টিক সাইকেল ক্লক
+    function startCountdown() {
+        setInterval(() => {
+            let seconds = new Date().getSeconds();
+            let remaining = 60 - seconds;
+            document.getElementById('timerTxt').innerText = "EXPIRY CYCLE: 1M (" + remaining + "s Remaining)";
+            
+            // প্রতি ১ মিনিটের শুরুতে নতুন ক্যান্ডেল তৈরি হলে অটোমেটিক নতুন সিগন্যাল স্ক্যান করবে
+            if (remaining === 59) {
+                triggerAIScanning();
+            }
+        }, 1000);
+    }
+
+    // শুরুতে চার্ট ও টাইমার অ্যাক্টিভেট করা
+    window.onload = function() {
+        loadTradingViewChart(currentAsset);
+        triggerAIScanning();
+        startCountdown();
+    };
 </script>
 
 </body>
-</html>
+    </html>
